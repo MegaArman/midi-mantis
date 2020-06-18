@@ -34,7 +34,7 @@ void *counter_new(t_floatarg f)
 }
 
 void counter_setup(void) {
-    counter_class = class_new(gensym("counter"),
+    counter_class = class_new(gensym("mantiss"),
                               (t_newmethod)counter_new,
                               0, 
                               sizeof(t_counter),

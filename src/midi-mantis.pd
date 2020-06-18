@@ -2,6 +2,6 @@
 #X obj 334 105 adc~;
 #X obj 275 405 noteout;
 #X obj 332 224 sigmund~ note env;
-#X obj 352 293 midi-mantis;
+#X obj 628 722 mantis;
 #X connect 0 0 2 0;
 #X connect 0 1 2 0;
