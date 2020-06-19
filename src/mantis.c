@@ -8,6 +8,7 @@ static t_class *mantis_class;
 typedef struct _mantis {
   t_object x_obj;
   t_float held_pitch;
+  t_float new_amp;
   t_inlet *in_pitch, *in_env;
   t_outlet *out_pitch, *out_env;
 } t_mantis;
@@ -25,20 +26,33 @@ typedef struct _mantis {
 
 void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 {
-  x->held_pitch = (int)round(f);
+  //what about initial pitch??
+  int rounded_pitch =  (int)round(f);
+
+  //turn off last note
+    outlet_float(x->out_env, 0);
+    outlet_float(x->out_pitch, x->held_pitch);
+
+  x->held_pitch = rounded_pitch;
   //post("pitch %d", rounded);
   //outlet_float(x->x_obj.ob_outlet, rounded);
-  outlet_float(x->out_pitch, x->held_pitch);
+  outlet_float(x->out_env, x->new_amp);
 
+  outlet_float(x->out_pitch, x->held_pitch);
+  
 }
 
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
   int rounded_amp = f < 50 ? 0 : (int)round(f);
-  
+  if (rounded_amp != 0)
+  {
+    x->new_amp = rounded_amp;
+  }
   //post("env %d", (int)round(f));
   outlet_float(x->out_env, rounded_amp);
-
+ 
+  
   //to turn note off, reoutput the pitch?
   (rounded_amp == 0) ? 
   outlet_float(x->out_pitch, x->held_pitch) 
@@ -53,6 +67,7 @@ void *mantis_new(t_floatarg f)
   
   //set initial mantis value
   //x->i_count = f;
+  x->held_pitch = 0;
 
   //inlets
   //inlet_new(internal object, internal objects pd ref, type inlet recieves, message to forward to handle the data 
