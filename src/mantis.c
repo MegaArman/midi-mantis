@@ -7,6 +7,7 @@ static t_class *mantis_class;
 
 typedef struct _mantis {
   t_object x_obj;
+  t_float held_pitch;
   t_inlet *in_pitch, *in_env;
   t_outlet *out_pitch, *out_env;
 } t_mantis;
@@ -24,18 +25,25 @@ typedef struct _mantis {
 
 void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 {
-  int rounded = (int)round(f);
+  x->held_pitch = (int)round(f);
   //post("pitch %d", rounded);
   //outlet_float(x->x_obj.ob_outlet, rounded);
-  outlet_float(x->out_pitch, rounded);
+  outlet_float(x->out_pitch, x->held_pitch);
 
 }
 
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
-  int rounded = (int)round(f);
+  int rounded_amp = f < 50 ? 0 : (int)round(f);
+  
   //post("env %d", (int)round(f));
-  outlet_float(x->out_env, rounded);
+  outlet_float(x->out_env, rounded_amp);
+
+  //to turn note off, reoutput the pitch?
+  (rounded_amp == 0) ? 
+  outlet_float(x->out_pitch, x->held_pitch) 
+  :
+  NULL;
 }
 
 //constructor

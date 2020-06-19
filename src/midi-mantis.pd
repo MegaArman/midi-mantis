@@ -1,4 +1,4 @@
-#N canvas 535 270 1280 984 12;
+#N canvas 0 96 1280 984 12;
 #X obj 334 105 adc~;
 #X obj 408 491 noteout;
 #X obj 410 356 mantis;
@@ -8,13 +8,16 @@
 #X obj 332 224 sigmund~ notes env;
 #X floatatom 311 442 5 0 0 0 - - -;
 #X floatatom 494 438 5 0 0 0 - - -;
+#X obj 289 377 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
 #X connect 0 0 6 0;
 #X connect 0 1 6 0;
 #X connect 2 0 7 0;
 #X connect 2 0 1 0;
 #X connect 2 1 8 0;
 #X connect 2 1 1 1;
+#X connect 3 0 2 1;
+#X connect 4 0 2 2;
 #X connect 6 0 3 0;
-#X connect 6 0 2 1;
 #X connect 6 1 4 0;
-#X connect 6 1 2 2;
+#X connect 9 0 7 0;
