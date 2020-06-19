@@ -1,5 +1,6 @@
 // object that increments and outputs a mantis when it gets banged
 #include "../m_pd.h"
+#include <math.h>
 
 static t_class *mantis_class;
 
@@ -22,12 +23,12 @@ void mantis_bang(t_mantis *x)
 
 void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 {
-  post("pitch %f", f);
+  post("pitch %d", (int)round(f));
 }
 
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
-  post("env %f", f);
+  post("env %d", (int)round(f));
 }
 
 //constructor
