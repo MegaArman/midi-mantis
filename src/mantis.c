@@ -1,4 +1,5 @@
-// object that increments and outputs a mantis when it gets banged
+// object that takes audio to midi input from sigmund but rounds pitch & amp and accounts for noteoffs
+//TODO: account for vibrato, polyphonic?, parameterize this
 #include "../m_pd.h"
 #include <math.h>
 
@@ -11,19 +12,21 @@ typedef struct _mantis {
 } t_mantis;
 
 //called whenever a bang is sent to this object
-void mantis_bang(t_mantis *x) 
-{
-  //convert it to float for outputting
-  t_float f = x->i_count;
-  //increment mantis
-  x->i_count++;
-  //send old-mantis to 1st outlet of the object
-  outlet_float(x->x_obj.ob_outlet, f);
-}
+//void mantis_bang(t_mantis *x) 
+//{
+//  //convert it to float for outputting
+//  t_float f = x->i_count;
+//  //increment mantis
+//  x->i_count++;
+//  //send old-mantis to 1st outlet of the object
+//  outlet_float(x->x_obj.ob_outlet, f);
+//}
 
 void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 {
-  post("pitch %d", (int)round(f));
+  int rounded = (int)round(f);
+  post("pitch %d", rounded);
+  outlet_float(x->x_obj.ob_outlet, rounded);
 }
 
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
@@ -69,7 +72,7 @@ void mantis_setup(void)
                               /* the object takes one argument which is a floating-point and defaults to 0 */
 
     /* call a function when object gets banged */
-    class_addbang(mantis_class, mantis_bang);
+ //   class_addbang(mantis_class, mantis_bang);
     
     //
     class_addmethod(mantis_class, 
