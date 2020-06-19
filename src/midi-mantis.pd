@@ -1,7 +1,7 @@
-#N canvas 0 96 960 984 12;
+#N canvas 0 96 1280 984 12;
 #X obj 334 105 adc~;
 #X obj 275 405 noteout;
 #X obj 332 224 sigmund~ note env;
-#X obj 628 722 mantis;
+#X obj 746 355 mantis;
 #X connect 0 0 2 0;
 #X connect 0 1 2 0;

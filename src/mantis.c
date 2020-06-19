@@ -1,30 +1,30 @@
-// object that increments and outputs a counter when it gets banged
+// object that increments and outputs a mantis when it gets banged
 #include "../m_pd.h"
 
-static t_class *counter_class;
+static t_class *mantis_class;
 
-typedef struct _counter {
+typedef struct _mantis {
   t_object x_obj;
   t_int i_count;
-} t_counter;
+} t_mantis;
 
 //called whenever a bang is sent to this object
-void counter_bang(t_counter *x) 
+void mantis_bang(t_mantis *x) 
 {
   //convert it to float for outputting
   t_float f = x->i_count;
-  //increment counter
+  //increment mantis
   x->i_count++;
-  //send old-counter to 1st outlet of the object
+  //send old-mantis to 1st outlet of the object
   outlet_float(x->x_obj.ob_outlet, f);
 }
 
 //constructor
-void *counter_new(t_floatarg f)
+void *mantis_new(t_floatarg f)
 {
-  t_counter *x = (t_counter *) pd_new(counter_class);
+  t_mantis *x = (t_mantis *) pd_new(mantis_class);
   
-  //set initial counter value
+  //set initial mantis value
   x->i_count = f; 
   
   //create a new outlet of floating-point values
@@ -33,14 +33,16 @@ void *counter_new(t_floatarg f)
   return (void *)x;
 }
 
-void counter_setup(void) {
-    counter_class = class_new(gensym("mantiss"),
-                              (t_newmethod)counter_new,
+void mantis_setup(void) {
+    mantis_class = class_new(gensym("mantis"),
+                              (t_newmethod)mantis_new,
                               0, 
-                              sizeof(t_counter),
+                              sizeof(t_mantis),
                               CLASS_DEFAULT,
-                              A_DEFFLOAT, 0); /* the object takes one argument which is a floating-point and defaults to 0 */
+                              A_DEFFLOAT, 
+                              0); 
+                              /* the object takes one argument which is a floating-point and defaults to 0 */
 
     /* call a function when object gets banged */
-    class_addbang(counter_class, counter_bang);
+    class_addbang(mantis_class, mantis_bang);
   }
