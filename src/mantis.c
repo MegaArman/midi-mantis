@@ -1,5 +1,4 @@
 // object that takes audio to midi input from sigmund but rounds pitch & amp and accounts for noteoffs
-//TODO: account for vibrato, polyphonic?, parameterize this
 #include "../m_pd.h"
 #include <math.h>
 
@@ -13,31 +12,17 @@ typedef struct _mantis {
   t_outlet *out_pitch, *out_env;
 } t_mantis;
 
-//called whenever a bang is sent to this object
-//void mantis_bang(t_mantis *x) 
-//{
-//  //convert it to float for outputting
-//  t_float f = x->i_count;
-//  //increment mantis
-//  x->i_count++;
-//  //send old-mantis to 1st outlet of the object
-//  outlet_float(x->x_obj.ob_outlet, f);
-//}
-
 void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 {
-  //what about initial pitch??
   int rounded_pitch =  (int)round(f);
 
-  //turn off last note
-    outlet_float(x->out_env, 0);
-    outlet_float(x->out_pitch, x->held_pitch);
+  //turn off last note in case of legato
+  outlet_float(x->out_env, 0);
+  outlet_float(x->out_pitch, x->held_pitch);
 
+  //output new note
   x->held_pitch = rounded_pitch;
-  //post("pitch %d", rounded);
-  //outlet_float(x->x_obj.ob_outlet, rounded);
   outlet_float(x->out_env, x->new_amp);
-
   outlet_float(x->out_pitch, x->held_pitch);
   
 }
@@ -45,15 +30,14 @@ void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
   int rounded_amp = f < 50 ? 0 : (int)round(f);
-  if (rounded_amp != 0)
+  if (rounded_amp != 0) 
   {
     x->new_amp = rounded_amp;
   }
-  //post("env %d", (int)round(f));
-  outlet_float(x->out_env, rounded_amp);
- 
   
-  //to turn note off, reoutput the pitch?
+  outlet_float(x->out_env, rounded_amp);
+  
+  //to turn note off when it naturally dies
   (rounded_amp == 0) ? 
   outlet_float(x->out_pitch, x->held_pitch) 
   :
@@ -64,31 +48,18 @@ void mantis_onSet_env(t_mantis *x, t_floatarg f)
 void *mantis_new(t_floatarg f)
 {
   t_mantis *x = (t_mantis *) pd_new(mantis_class);
-  
-  //set initial mantis value
-  //x->i_count = f;
   x->held_pitch = 0;
 
-  //inlets
-  //inlet_new(internal object, internal objects pd ref, type inlet recieves, message to forward to handle the data 
+  //createt inlets
   x->in_pitch = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_float, gensym("in_pitch"));
   x->in_env = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_float, gensym("in_env"));
   
-  //create a new outlet of floating-point values
-  //outlet_new(&x->x_obj, &s_float);
+  //create outlets
   x->out_pitch = outlet_new(&x->x_obj, &s_float);
   x->out_env = outlet_new(&x->x_obj, &s_float);
 
   return (void *)x;
 }
-
-//void polybang_free(t_mantis *x) 
-//{
-//  inlet_free(x->in_pitch);
-//  inlet_free(x->in_env);
-//  outlet_free()
-//}
-
 
 void mantis_setup(void) 
 {
@@ -99,12 +70,7 @@ void mantis_setup(void)
                               CLASS_DEFAULT,
                               A_DEFFLOAT, 
                               0); 
-                              /* the object takes one argument which is a floating-point and defaults to 0 */
 
-    /* call a function when object gets banged */
- //   class_addbang(mantis_class, mantis_bang);
-    
-    //
     class_addmethod(mantis_class, 
                     (t_method) mantis_onSet_pitch,
                     gensym("in_pitch"),
@@ -116,4 +82,4 @@ void mantis_setup(void)
                     gensym("in_env"),
                     A_DEFFLOAT,
                     0);
-  }
+}
