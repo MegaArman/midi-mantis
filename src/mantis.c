@@ -29,7 +29,7 @@ void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
-  int rounded_amp = f < 50 ? 0 : (int)round(f);
+  int rounded_amp = f < 45 ? 0 : (int)round(f);
   if (rounded_amp != 0) 
   {
     x->new_amp = rounded_amp;
