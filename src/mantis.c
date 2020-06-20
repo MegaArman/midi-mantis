@@ -30,15 +30,17 @@ void mantis_onSet_pitch(t_mantis *x, t_floatarg f)
 void mantis_onSet_env(t_mantis *x, t_floatarg f)
 {
   int rounded_amp = f < 45 ? 0 : (int)round(f);
-  if (rounded_amp != 0) 
+  int scaled_amp = (rounded_amp == 0) ? 0 : 45 + (rounded_amp - 45) * 3; 
+
+  if (scaled_amp != 0) 
   {
-    x->new_amp = rounded_amp;
+    x->new_amp = scaled_amp;
   }
   
-  outlet_float(x->out_env, rounded_amp);
+  outlet_float(x->out_env, scaled_amp);
   
   //to turn note off when it naturally dies
-  (rounded_amp == 0) ? 
+  (scaled_amp == 0) ? 
   outlet_float(x->out_pitch, x->held_pitch) 
   :
   NULL;
